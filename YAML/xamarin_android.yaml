@@ -1,0 +1,48 @@
+# Xamarin.Android
+# Build a Xamarin.Android project.
+# Add steps that test, sign, and distribute an app, save build artifacts, and more:
+# https://docs.microsoft.com/azure/devops/pipelines/languages/xamarin
+
+trigger: none
+
+pool:
+  vmImage: 'macos-latest'
+
+variables:
+  buildConfiguration: 'Release'
+  system.debug: 'true'
+
+steps:
+- task: NuGetToolInstaller@1
+  displayName: 'Use NuGet 4.4.1'
+  inputs:
+    versionSpec: 4.4.1
+
+- task: NuGetCommand@2
+  displayName: 'NuGet restore'
+  inputs:
+    restoreSolution: xamarinforms.sln
+
+- task: XamarinAndroid@1
+  displayName: 'Build Xamarin.Android project xamarinforms/xamarinforms.Android/xamarinforms.Android.csproj'
+  inputs:
+    projectFile: xamarinforms/xamarinforms.Android/xamarinforms.Android.csproj
+    outputDirectory: '$(build.binariesdirectory)/$(BuildConfiguration)'
+    configuration: '$(BuildConfiguration)'
+    msbuildVersionOption: latest
+    msbuildArchitectureOption: x64
+    jdkVersionOption: 1.8
+
+- task: AndroidSigning@3
+  inputs:
+    apkFiles: '**/*.apk'
+    apksignerKeystoreFile: 'xamarin.keystore'
+    apksignerKeystorePassword: 'AuroraLoop88'
+    apksignerKeystoreAlias: 'com.auroraloop.xamarinforms'
+    apksignerKeyPassword: 'AuroraLoop88'
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: drop'
+  inputs:
+    PathtoPublish: '$(build.binariesdirectory)/$(BuildConfiguration)'
+  condition: succeededOrFailed()
