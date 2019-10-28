@@ -33,14 +33,6 @@ steps:
     msbuildArchitectureOption: x64
     jdkVersionOption: 1.8
 
-- task: AndroidSigning@3
-  inputs:
-    apkFiles: '**/*.apk'
-    apksignerKeystoreFile: 'xamarin.keystore'
-    apksignerKeystorePassword: 'AuroraLoop88'
-    apksignerKeystoreAlias: 'com.auroraloop.xamarinforms'
-    apksignerKeyPassword: 'AuroraLoop88'
-
 - task: PublishBuildArtifacts@1
   displayName: 'Publish Artifact: drop'
   inputs:
